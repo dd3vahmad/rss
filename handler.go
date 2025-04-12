@@ -75,6 +75,35 @@ func (apiCfg *apiConfig) handlerGetUsers(w http.ResponseWriter, r *http.Request)
 		respondWithError(w, 404, "No users found")
 		return
 	}
-	
+
 	respondWithJSON(w, 200, usersList)
+}
+
+func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request) {
+	type parameters struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+		UserID uuid.UUID `json:"user_id"`
+	}
+	decoder := json.NewDecoder(r.Body)
+
+	params := parameters{}
+	err := decoder.Decode(&params)
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("Invalid request body: %v", err))
+		return
+	}
+
+	feed, err := apiCfg.DB.CreateFeed(r.Context(), db.CreateFeedParams{
+		ID: uuid.New(),
+		Name: params.Name,
+		Url: params.URL,
+		UserID: params.UserID,
+	})
+	if err != nil {
+		respondWithError(w, 500, fmt.Sprintf("Failed to create feed %v", err))
+		return
+	}
+
+	respondWithJSON(w, 201, databaseFeedToFeed(feed))
 }

@@ -19,10 +19,10 @@ RETURNING id, name, url, user_id, created_at, updated_at
 `
 
 type CreateFeedParams struct {
-	ID        int32
+	ID        uuid.UUID
 	Name      string
 	Url       string
-	UserID    uuid.NullUUID
+	UserID    uuid.UUID
 	CreatedAt sql.NullTime
 	UpdatedAt sql.NullTime
 }
