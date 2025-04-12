@@ -58,3 +58,23 @@ func (apiCfg *apiConfig) handlerGetUserByAPIKey(w http.ResponseWriter, r *http.R
 
 	respondWithJSON(w, 200, databaseUserToUser(user))
 }
+
+func (apiCfg *apiConfig) handlerGetUsers(w http.ResponseWriter, r *http.Request) {
+
+	users, err := apiCfg.DB.GetUsers(r.Context())
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("Could not get users: %v", err))
+		return
+	}
+
+	usersList := make([]User, len(users))
+	for i, user := range users {
+		usersList[i] = databaseUserToUser(user)
+	}
+	if len(usersList) == 0 {
+		respondWithError(w, 404, "No users found")
+		return
+	}
+	
+	respondWithJSON(w, 200, usersList)
+}
