@@ -101,7 +101,7 @@ func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Reques
 		UserID: params.UserID,
 	})
 	if err != nil {
-		respondWithError(w, 500, fmt.Sprintf("Failed to create feed %v", err))
+		respondWithError(w, 500, fmt.Sprintf("Failed to create feed because: %v", err))
 		return
 	}
 
